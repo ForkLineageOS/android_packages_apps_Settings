@@ -18,9 +18,11 @@ package com.android.settings.security;
 
 import android.app.settings.SettingsEnums;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.display.AmbientDisplayConfiguration;
 
 import androidx.annotation.VisibleForTesting;
+import androidx.preference.PreferenceScreen;
 
 import com.android.settings.R;
 import com.android.settings.dashboard.DashboardFragment;
@@ -38,12 +40,16 @@ import com.android.settingslib.search.SearchIndexable;
 import java.util.ArrayList;
 import java.util.List;
 
+import lineageos.app.LineageContextConstants;
+
 /**
  * Settings screen for lock screen preference
  */
 @SearchIndexable
 public class LockscreenDashboardFragment extends DashboardFragment
         implements OwnerInfoPreferenceController.OwnerInfoCallback {
+
+    private Context mContext;
 
     public static final String KEY_AMBIENT_DISPLAY_ALWAYS_ON = "ambient_display_always_on";
 
@@ -83,6 +89,16 @@ public class LockscreenDashboardFragment extends DashboardFragment
     @Override
     public int getHelpResource() {
         return R.string.help_url_lockscreen;
+    }
+
+    @Override
+    public void updateCategoryVisibility() {
+        final String Key_FOD_Animations_Category = "fod_animations_category";
+        PackageManager packageManager = mContext.getPackageManager();
+        final boolean FOD = packageManager.hasSystemFeature(LineageContextConstants.Features.FOD);
+        if (!FOD){
+        getPreferenceScreen().removePreference(findPreference(Key_FOD_Animations_Category));
+        }
     }
 
     @Override
